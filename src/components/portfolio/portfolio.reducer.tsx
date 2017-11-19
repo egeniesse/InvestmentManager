@@ -1,4 +1,4 @@
-import {PortfolioState, COPY_PORTFOLIO, PortfolioRequest} from './portfolio.types';
+import { PortfolioState, COPY_PORTFOLIO, PortfolioRequest } from './portfolio.types';
 
 export function portfolioState(state: PortfolioState = { propertyIds: []}, action: PortfolioRequest): PortfolioState {
   switch (action.type) {

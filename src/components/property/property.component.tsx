@@ -5,24 +5,25 @@ import { generateId } from '../../utils';
 import MortgageContainer from '../mortgage/mortgage.container';
 
 interface Props {
-  id: string,
-  propertiesById: PropertiesById,
-  mortgagesById: MortgagesById,
+  id: string;
+  propertiesById: PropertiesById;
+  mortgagesById: MortgagesById;
   updateState: (payload: PropertyState) => { type: string; payload: PropertyState; };
   createMortgage: (mortgageId: string) => { type: string; payload: MortgageState; };
 }
 
 export class PropertyComponent extends React.Component<Props, object> {
   render() {
+    const boundCreateMortgage = this.createMortgage.bind(this);
     return (
       <div className="property">
-        <button onClick={this.createMortgage.bind(this)}>Create Mortgage</button>
+        <div>This is the property Id: {this.props.id}</div>
+        <button onClick={boundCreateMortgage}>Create Mortgage</button>
         <div>
         {this.data.mortgageIds.map((mortgageId) => {
           return <MortgageContainer key={mortgageId} id={mortgageId}/>;
         })}
         </div>
-        This is the property
       </div>
     );
   }

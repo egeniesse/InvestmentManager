@@ -7,7 +7,6 @@ const logo = require('../../assets/logo.svg');
 export class AppComponent extends React.Component {
 
   render() {
-    console.log('here now')
     return (
       <div className="App">
         <div className="App-header">
@@ -22,4 +21,3 @@ export class AppComponent extends React.Component {
     );
   }
 }
-

@@ -20,4 +20,4 @@ export type CopyMortgageRequest = {
 
 export type MortgageAction = COPY_MORTGAGE;
 export type MortgageRequest = CopyMortgageRequest;
-export type MortgagesById = { [mortgageId: string]: MortgageState }
+export type MortgagesById = { [mortgageId: string]: MortgageState };

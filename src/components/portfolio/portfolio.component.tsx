@@ -5,16 +5,17 @@ import { generateId } from '../../utils';
 import PropertyContainer from '../property/property.container';
 
 interface Props {
-  portfolioState: PortfolioState,
+  portfolioState: PortfolioState;
   updateState: (payload: PortfolioState) => { type: string; payload: PortfolioState; };
   createProperty: (propertyId: string) => { type: string; payload: PropertyState; };
 }
 
 export class PortfolioComponent extends React.Component<Props, object> {
   render() {
+    const boundCreateProperty = this.createProperty.bind(this);
     return (
       <div className="portfolio">
-        <button onClick={this.createProperty.bind(this)}>Create Property</button>
+        <button onClick={boundCreateProperty}>Create Property</button>
         <div>
         {this.data.propertyIds.map((propertyId) => {
           return <PropertyContainer key={propertyId} id={propertyId}/>;

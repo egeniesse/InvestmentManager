@@ -14,4 +14,4 @@ export type InitPropertyRequest = {
 export type PropertyAction = COPY_PROPERTY;
 export type PropertyRequest = InitPropertyRequest;
 
-export type PropertiesById = { [propertyId: string]: PropertyState }
+export type PropertiesById = { [propertyId: string]: PropertyState };

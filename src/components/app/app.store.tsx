@@ -7,8 +7,7 @@ import reducer from './app.reducer';
 export let StoreState = createStore(reducer);
 
 export interface StoreState {
-  portfolioState: PortfolioState,
-  mortgagesById: MortgagesById,
-  propertiesById: PropertiesById
+  portfolioState: PortfolioState;
+  mortgagesById: MortgagesById;
+  propertiesById: PropertiesById;
 }
-
