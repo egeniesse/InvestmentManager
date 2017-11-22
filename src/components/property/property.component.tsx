@@ -13,6 +13,10 @@ interface Props {
 }
 
 export class PropertyComponent extends React.Component<Props, object> {
+  constructor(props: Props) {
+    super(props);
+    this.state = this.data;
+  }
   render() {
     const boundCreateMortgage = this.createMortgage.bind(this);
     return (

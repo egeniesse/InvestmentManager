@@ -1,3 +1,4 @@
+import * as React from 'react';
 export interface MortgageState {
   id: string;
   loanAmount: number;
@@ -21,3 +22,4 @@ export type CopyMortgageRequest = {
 export type MortgageAction = COPY_MORTGAGE;
 export type MortgageRequest = CopyMortgageRequest;
 export type MortgagesById = { [mortgageId: string]: MortgageState };
+export type EventHandler = { [value: string]: (event: React.ChangeEvent<HTMLInputElement>) => void };

@@ -1,0 +1,25 @@
+.mortgage-component {
+  display: inline-flex;
+  flex-wrap: wrap;
+}
+
+.single-mortgage {
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  padding: 1vw;
+  margin: 1vw;
+  width: content;
+}
+.single-mortgage .line-item {
+  justify-content: center;
+  text-align: left;
+  display: flex;
+}
+
+.single-mortgage .line-item > * {
+  padding: 10px;
+  margin: 5px;
+  width: 10vw;
+}
+
+.mortgage-component div span {
+}
