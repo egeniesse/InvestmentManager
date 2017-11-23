@@ -12,6 +12,7 @@ export class AppComponent extends React.Component {
         <div className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
         </div>
+
         <PortfolioContainer />
       </div>
     );

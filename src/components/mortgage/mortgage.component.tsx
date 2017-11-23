@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { MortgageState, MortgagesById, EventHandler } from './mortgage.types';
 import { Mortgage } from './mortgage';
+import Slider from 'material-ui/Slider';
 import './mortgage.css'
 
 interface Props {
@@ -12,6 +13,14 @@ interface Props {
 interface ComponentState {
   mortgage: Mortgage;
   editable: boolean;
+}
+
+interface ViewableField {
+  description: string;
+  propName: string;
+  minValue: number;
+  maxValue: number;
+  step: number;
 }
 
 export class MortgageComponent extends React.Component<Props, object> {
@@ -42,7 +51,7 @@ export class MortgageComponent extends React.Component<Props, object> {
 
   handleChange(property: string, event: React.ChangeEvent<HTMLInputElement>) {
     const partialState = {}
-    partialState[property] = event.currentTarget.value;
+    partialState[property] = event.currentTarget.value || 1  ;
     this.setState(Object.assign({}, this.state, { 
       mortgage: this.state.mortgage.copy(partialState)
     }));
@@ -71,6 +80,7 @@ export class MortgageComponent extends React.Component<Props, object> {
   }
 
   renderComponent() {
+    const payments = this.state.mortgage.forcastRemainingPayments();    
     return (
       <div className="mortgage-component">
         <div className="single-mortgage">
@@ -93,6 +103,13 @@ export class MortgageComponent extends React.Component<Props, object> {
           >{this.state.editable ? "Done" : "Edit"}
           </button>
           <button className="update-mortgage" onClick={this.boundDelete}>Delete</button>
+        </div>
+        <div>
+        <h2>Simulate</h2>
+        <Slider min={0} max={100}/>
+        <div>Months left: {payments.length}</div>
+        <div>Monthly Payment: {this.state.mortgage.monthlyPayment}</div>
+        <div>Total Paid in Interest: {payments[payments.length-1].totalInterestPaid}</div>
         </div>
       </div>
     );

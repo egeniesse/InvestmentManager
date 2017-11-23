@@ -1,7 +1,7 @@
 import * as React from 'react';
 export interface MortgageState {
   id: string;
-  loanAmount: number;
+  homeValue: number;
   closingCosts: number;
   downPayment: number;
   interestRate: number;
