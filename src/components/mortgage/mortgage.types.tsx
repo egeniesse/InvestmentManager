@@ -9,6 +9,15 @@ export interface MortgageState {
   interestPaid: number;
   name: string;
   paidAgainstPrincipal: number;
+  isDeleted?: boolean;
+}
+
+export interface MonthlyPaymentBreakdown {
+  monthPaidAgainstPrincipal: number;
+  monthInterestPaid: number;
+  totalPaidAgainstPrincipal: number;
+  totalInterestPaid: number;
+  balanceRemaining: number;
 }
 
 export const COPY_MORTGAGE = 'COPY_MORTGAGE';

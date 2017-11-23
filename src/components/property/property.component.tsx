@@ -3,6 +3,7 @@ import { PropertyState, PropertiesById } from './property.types';
 import { MortgagesById, MortgageState } from '../mortgage/mortgage.types';
 import { generateId } from '../../utils';
 import MortgageContainer from '../mortgage/mortgage.container';
+import './property.css';
 
 interface Props {
   id: string;
@@ -21,8 +22,12 @@ export class PropertyComponent extends React.Component<Props, object> {
     const boundCreateMortgage = this.createMortgage.bind(this);
     return (
       <div className="property">
+        <div className="property-header">
+          <button onClick={boundCreateMortgage}>Add Mortgage</button>                    
+          <button onClick={boundCreateMortgage}>Add Mortgage</button>
+          <button onClick={boundCreateMortgage}>Add Mortgage</button>
+        </div>
         <div>This is the property Id: {this.props.id}</div>
-        <button onClick={boundCreateMortgage}>Create Mortgage</button>
         <div>
         {this.data.mortgageIds.map((mortgageId) => {
           return <MortgageContainer key={mortgageId} id={mortgageId}/>;

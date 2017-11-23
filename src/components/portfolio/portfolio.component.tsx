@@ -2,6 +2,7 @@ import * as React from 'react';
 import { PortfolioState } from './portfolio.types';
 import { PropertyState } from '../property/property.types';
 import { generateId } from '../../utils';
+import './portfolio.css';
 import PropertyContainer from '../property/property.container';
 
 interface Props {
@@ -16,7 +17,7 @@ export class PortfolioComponent extends React.Component<Props, object> {
     return (
       <div className="portfolio">
         <button onClick={boundCreateProperty}>Create Property</button>
-        <div>
+        <div className="properties">
         {this.data.propertyIds.map((propertyId) => {
           return <PropertyContainer key={propertyId} id={propertyId}/>;
         })}
