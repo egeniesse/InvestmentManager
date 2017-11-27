@@ -1,7 +1,7 @@
 import { ThingType } from './components/app/app.types';
 
 export function generateId(dataType: ThingType) {
-  return `urn:${dataType}:${Math.ceil(Math.random() * 1000000)}`;
+  return `urn:${dataType}:${Date.now()}`;
 }
 
 export function simpleCopy(obj: {}): {} {

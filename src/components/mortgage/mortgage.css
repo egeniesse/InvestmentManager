@@ -1,25 +1,28 @@
 .mortgage-component {
-  display: inline-flex;
-  flex-wrap: wrap;
-}
-
-.single-mortgage {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  padding: 1vw;
-  margin: 1vw;
+  margin: 10px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-evenly;
   width: content;
 }
+
 .single-mortgage .line-item {
   justify-content: center;
+  margin: 15px;
   text-align: left;
   display: flex;
+  flex-wrap: wrap;
+  width: 15vw;
 }
 
 .single-mortgage .line-item > * {
-  padding: 10px;
-  margin: 5px;
-  width: 10vw;
+  width: 35vw;
 }
 
-.mortgage-component div span {
+.mortgage-data {
+  margin: 5px;
+  width: 38vw;
+}
+.data {
+  text-align: left;
 }

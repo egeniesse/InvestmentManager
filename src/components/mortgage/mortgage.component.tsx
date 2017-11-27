@@ -2,7 +2,8 @@ import * as React from 'react';
 import { MortgageState, MortgagesById, EventHandler } from './mortgage.types';
 import { Mortgage } from './mortgage';
 import Slider from 'material-ui/Slider';
-import './mortgage.css'
+import './mortgage.css';
+import { MortgageChart } from './mortgage.chart';
 
 interface Props {
   id: string;
@@ -23,9 +24,19 @@ interface ViewableField {
   step: number;
 }
 
+function makeViewableField(
+  propName: string,
+  description: string,
+  minValue: number,
+  maxValue: number,
+  step: number
+): ViewableField {
+  return { propName, description, minValue, maxValue, step };
+}
+
 export class MortgageComponent extends React.Component<Props, object> {
   state: ComponentState;
-  boundHandlers: EventHandler;
+  boundHandlers: { [prop: string]: EventHandler};
   boundSubmit: () => void;
   boundChangeEditable: () => void;
   boundDelete: () => void;
@@ -36,8 +47,8 @@ export class MortgageComponent extends React.Component<Props, object> {
       mortgage: Mortgage.create(this.props.mortgagesById[this.props.id] || { id : this.props.id }),
       editable: false
     };
-    this.boundHandlers = Object.keys(this.data).reduce((handlers: {[value: string]: EventHandler}, prop: string) => {
-      handlers[prop] = this.handleChange.bind(this, prop);
+    this.boundHandlers = this.viewableFields.reduce((handlers: {string: EventHandler}, field: ViewableField) => {
+      handlers[field.propName] = this.handleChange.bind(this, field.propName);
       return handlers;
     }, {});
     this.boundSubmit = this.handleSubmit.bind(this);
@@ -49,9 +60,9 @@ export class MortgageComponent extends React.Component<Props, object> {
     return this.state.mortgage.state;
   }
 
-  handleChange(property: string, event: React.ChangeEvent<HTMLInputElement>) {
-    const partialState = {}
-    partialState[property] = event.currentTarget.value || 1  ;
+  handleChange(property: string, e: React.MouseEvent<{}>, value: number): void {
+    const partialState = {};
+    partialState[property] = value;
     this.setState(Object.assign({}, this.state, { 
       mortgage: this.state.mortgage.copy(partialState)
     }));
@@ -71,55 +82,69 @@ export class MortgageComponent extends React.Component<Props, object> {
 
   changeEditable() {
     this.setState(Object.assign ({}, this.state, {
-      editable: this.state.editable ? false : true
+      editable: !this.state.editable
     }));
   }
 
   submitState() {
-    this.props.updateState(Object.assign({}, this.data))
+    this.props.updateState(Object.assign({}, this.data));
+  }
+
+  get viewableFields(): Array<ViewableField> {
+    return [
+      makeViewableField('homeValue', 'Home Value', 10000, 2000000, 5000),
+      makeViewableField('downPayment', 'Percent Down Payment', 0, 99, 1),
+      makeViewableField('interestRate', 'Interest Rate', 1, 7, .05),
+      makeViewableField('termYears', 'Term Years', 15, 30, 15),
+      makeViewableField('closingCosts', 'Closing Costs', 0, 20000, 100),
+      makeViewableField('additionalMonthlyPayment', 'Additional Monthly Payment', 0, 5000, 50)
+    ];
   }
 
   renderComponent() {
-    const payments = this.state.mortgage.forcastRemainingPayments();    
+    const forcastedMortgage = this.state.mortgage.forcastRemainingPayments();
+    const mortgageDetails = forcastedMortgage.pastStates;
     return (
       <div className="mortgage-component">
         <div className="single-mortgage">
-        {Object.keys(this.data).filter(prop => prop !== 'id' && prop !== 'isDeleted').map((prop) => {
-          return ( 
-            <div className="line-item" key= {this.data.id + prop}>
-              <span>{prop}:</span>
-              {(() => {if (this.state.editable === true) {
-                return <input type="text" value={this.data[prop]} onChange={this.boundHandlers[prop]} />
-              } else {
-                return <span>{this.data[prop]}</span>
+        {this.viewableFields.map((field) => {
+          return (
+            <div className="line-item" key={this.data.id + field.propName}>
+              <div className="line-data">{field.description}: {this.data[field.propName]}</div>
+              {this.state.editable === true ?
+                <Slider
+                  min={field.minValue}
+                  max={field.maxValue}
+                  sliderStyle={{margin: '5px'}}
+                  defaultValue={this.data[field.propName]}
+                  step={field.step}
+                  onChange={this.boundHandlers[field.propName]}
+                /> : <div/>
               }
-              })()}
             </div>
-          )
+          );
         })}
-          <button 
+          <button
             className="update-mortgage"
             onClick={this.state.editable ? this.boundSubmit : this.boundChangeEditable}
-          >{this.state.editable ? "Done" : "Edit"}
+          >{this.state.editable ? 'Done' : 'Edit'}
           </button>
           <button className="update-mortgage" onClick={this.boundDelete}>Delete</button>
         </div>
-        <div>
-        <h2>Simulate</h2>
-        <Slider min={0} max={100}/>
-        <div>Months left: {payments.length}</div>
-        <div>Monthly Payment: {this.state.mortgage.monthlyPayment}</div>
-        <div>Total Paid in Interest: {payments[payments.length-1].totalInterestPaid}</div>
+        <div className="mortgage-data">
+          <h2>Data</h2>
+          <div className="data">Upfront Cost: {this.state.mortgage.downPaymentTotal + this.data.closingCosts}</div>
+          <div className="data">Months left: {mortgageDetails.length - 1}</div>
+          <div className="data">Monthly Payment: {this.state.mortgage.monthlyPayment}</div>
+          <div className="data">Total Paid in Interest: {forcastedMortgage.interestPaid}</div>
+          <div className="data">Total Cost: {forcastedMortgage.totalSpent}</div>
+          <MortgageChart data={mortgageDetails} />
         </div>
       </div>
     );
   }
 
   render() {
-    console.log(this.state.mortgage.monthlyPayment, 'payment')
-    return this.data.isDeleted !== true ? this.renderComponent() : <div></div>;
+    return this.data.isDeleted !== true ? this.renderComponent() : <div/>;
   }
 }
-
-
-

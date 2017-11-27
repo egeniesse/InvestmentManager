@@ -24,11 +24,8 @@ export class PropertyComponent extends React.Component<Props, object> {
       <div className="property">
         <div className="property-header">
           <button onClick={boundCreateMortgage}>Add Mortgage</button>                    
-          <button onClick={boundCreateMortgage}>Add Mortgage</button>
-          <button onClick={boundCreateMortgage}>Add Mortgage</button>
         </div>
-        <div>This is the property Id: {this.props.id}</div>
-        <div>
+        <div className="mortgage-container">
         {this.data.mortgageIds.map((mortgageId) => {
           return <MortgageContainer key={mortgageId} id={mortgageId}/>;
         })}
