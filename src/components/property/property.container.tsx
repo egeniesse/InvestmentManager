@@ -4,7 +4,7 @@ import { mortgageActions } from '../mortgage/mortgage.action';
 import { StoreState } from '../app/app.store';
 import { PropertyState, PropertyAction } from './property.types';
 import { connect, Dispatch } from 'react-redux';
-import { Mortgage } from '../mortgage/mortgage';
+import { Mortgage } from '../mortgage/mortgage.model';
 
 export function mapStateToProps({ mortgagesById, propertiesById }: StoreState) {
   return { mortgagesById, propertiesById };

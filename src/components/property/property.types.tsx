@@ -1,6 +1,15 @@
 export interface PropertyState {
   id: string;
+  propertyValue: number;
   mortgageIds: Array<string>;
+  monthlyRent: number;
+  managementFees: number;
+  vacancyLoss: number;
+  minorRepairWithholding: number;
+  majorRemodelWithholding: number;
+  taxes: number;
+  utilities: number;
+  insurance: number;
 }
 
 export const COPY_PROPERTY = 'COPY_PROPERTY';

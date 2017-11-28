@@ -1,5 +1,5 @@
 import { MortgageState } from './mortgage.types';
-import { generateId } from '../../utils';
+import { generateId, round } from '../../utils';
 
 export class Mortgage {
 
@@ -43,7 +43,9 @@ export class Mortgage {
   }
 
   get monthlyPayment(): number {
-    return this.minimumMonthlyPayment + round(this.state.additionalMonthlyPayment);
+    const payment = round(this.minimumMonthlyPayment + this.state.additionalMonthlyPayment);
+    const adjustedPayment = round(this.currentMonthsInterestPayment + this.currentMonthsPrincipalPayment(payment));
+    return Math.min(payment, adjustedPayment);
   }
 
   get remainingBalance(): number {
@@ -90,14 +92,14 @@ export class Mortgage {
 
   forcastRemainingPayments(): Mortgage {
     let tempMortgage: Mortgage = Mortgage.create(this.state);
-    while (tempMortgage.remainingBalance) {
+    while (tempMortgage.remainingBalance > 0) {
       tempMortgage.makePayment();
     }
     return tempMortgage;
   }
 
   get pastStates(): Array<Mortgage> {
-    let tempMortgage = this.previousState;
+    let tempMortgage: Mortgage | null = Mortgage.create(this.state);
     const mortgages = [];
     while (tempMortgage) {
       mortgages.push(tempMortgage);
@@ -112,6 +114,3 @@ export class Mortgage {
   }
 }
 
-function round(num: number): number {
-  return Math.ceil(num * 100) / 100;
-}

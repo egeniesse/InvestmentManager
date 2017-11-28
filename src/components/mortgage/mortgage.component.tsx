@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { MortgageState, MortgagesById, EventHandler } from './mortgage.types';
-import { Mortgage } from './mortgage';
+import { Mortgage } from './mortgage.model';
 import Slider from 'material-ui/Slider';
 import './mortgage.css';
 import { MortgageChart } from './mortgage.chart';
@@ -13,7 +13,6 @@ interface Props {
 
 interface ComponentState {
   mortgage: Mortgage;
-  editable: boolean;
 }
 
 interface ViewableField {
@@ -37,22 +36,17 @@ function makeViewableField(
 export class MortgageComponent extends React.Component<Props, object> {
   state: ComponentState;
   boundHandlers: { [prop: string]: EventHandler};
-  boundSubmit: () => void;
-  boundChangeEditable: () => void;
   boundDelete: () => void;
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      mortgage: Mortgage.create(this.props.mortgagesById[this.props.id] || { id : this.props.id }),
-      editable: false
+      mortgage: Mortgage.create(this.props.mortgagesById[this.props.id] || { id : this.props.id })
     };
     this.boundHandlers = this.viewableFields.reduce((handlers: {string: EventHandler}, field: ViewableField) => {
       handlers[field.propName] = this.handleChange.bind(this, field.propName);
       return handlers;
     }, {});
-    this.boundSubmit = this.handleSubmit.bind(this);
-    this.boundChangeEditable = this.changeEditable.bind(this);
     this.boundDelete = this.handleDelete.bind(this);
   }
 
@@ -66,6 +60,7 @@ export class MortgageComponent extends React.Component<Props, object> {
     this.setState(Object.assign({}, this.state, { 
       mortgage: this.state.mortgage.copy(partialState)
     }));
+    this.submitState();
   }
 
   handleDelete() {
@@ -73,17 +68,6 @@ export class MortgageComponent extends React.Component<Props, object> {
       mortgage: this.state.mortgage.copy({ isDeleted: true })
     }));
     this.submitState();
-  }
-
-  handleSubmit() {
-    this.changeEditable();
-    this.submitState();
-  }
-
-  changeEditable() {
-    this.setState(Object.assign ({}, this.state, {
-      editable: !this.state.editable
-    }));
   }
 
   submitState() {
@@ -111,7 +95,6 @@ export class MortgageComponent extends React.Component<Props, object> {
           return (
             <div className="line-item" key={this.data.id + field.propName}>
               <div className="line-data">{field.description}: {this.data[field.propName]}</div>
-              {this.state.editable === true ?
                 <Slider
                   min={field.minValue}
                   max={field.maxValue}
@@ -119,16 +102,10 @@ export class MortgageComponent extends React.Component<Props, object> {
                   defaultValue={this.data[field.propName]}
                   step={field.step}
                   onChange={this.boundHandlers[field.propName]}
-                /> : <div/>
-              }
+                />
             </div>
           );
         })}
-          <button
-            className="update-mortgage"
-            onClick={this.state.editable ? this.boundSubmit : this.boundChangeEditable}
-          >{this.state.editable ? 'Done' : 'Edit'}
-          </button>
           <button className="update-mortgage" onClick={this.boundDelete}>Delete</button>
         </div>
         <div className="mortgage-data">

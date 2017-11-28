@@ -1,6 +1,6 @@
 import { Line } from 'react-chartjs-2';
 import * as React from 'react';
-import { Mortgage } from './mortgage';
+import { Mortgage } from './mortgage.model';
 import { ChartData } from 'chart.js';
 
 interface Props {
