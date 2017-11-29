@@ -3,13 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/d3": "^4.12.0",
     "@types/material-ui": "^0.18.4",
     "@types/react-chartjs-2": "^2.0.2",
     "@types/react-redux": "^5.0.12",
     "@types/redux-actions": "^2.2.2",
+    "@types/tinycolor2": "^1.4.0",
     "chart.js": "^2.7.1",
-    "d3": "^4.12.0",
     "material-ui": "^0.19.4",
     "node-sass-chokidar": "0.0.3",
     "react": "^16.0.0",
@@ -18,7 +17,8 @@
     "react-redux": "^5.0.6",
     "react-scripts-ts": "2.8.0",
     "redux": "^3.7.2",
-    "redux-actions": "^2.2.1"
+    "redux-actions": "^2.2.1",
+    "tinycolor2": "^1.4.1"
   },
   "scripts": {
     "start": "react-scripts-ts start",

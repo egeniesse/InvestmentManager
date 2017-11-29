@@ -1,5 +1,5 @@
 import { MortgageState } from './mortgage.types';
-import { generateId, round } from '../../utils';
+import { generateId, round } from '../../shared/shared.method';
 
 export class Mortgage {
 
@@ -18,7 +18,7 @@ export class Mortgage {
       paidAgainstPrincipal: 0,
       previousState: null,
       isDeleted: false,
-      additionalMonthlyPayment: 0
+      extraMonthlyPayment: 0
     };
     return new Mortgage(Object.assign(defaults, partialState));
   }
@@ -43,7 +43,7 @@ export class Mortgage {
   }
 
   get monthlyPayment(): number {
-    const payment = round(this.minimumMonthlyPayment + this.state.additionalMonthlyPayment);
+    const payment = round(this.minimumMonthlyPayment + this.state.extraMonthlyPayment);
     const adjustedPayment = round(this.currentMonthsInterestPayment + this.currentMonthsPrincipalPayment(payment));
     return Math.min(payment, adjustedPayment);
   }
@@ -113,4 +113,3 @@ export class Mortgage {
     return this;
   }
 }
-

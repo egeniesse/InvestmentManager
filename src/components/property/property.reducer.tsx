@@ -1,5 +1,5 @@
 import { PropertiesById, PropertyState, COPY_PROPERTY, PropertyRequest } from './property.types';
-import { simpleCopy } from '../../utils';
+import { simpleCopy } from '../../shared/shared.method';
 
 export function propertiesById(state: PropertiesById = {}, action: PropertyRequest): PropertiesById {
   switch (action.type) {

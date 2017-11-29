@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { PortfolioState } from './portfolio.types';
 import { PropertyState } from '../property/property.types';
-import { generateId } from '../../utils';
+import { generateId } from '../../shared/shared.method';
 import './portfolio.css';
 import PropertyContainer from '../property/property.container';
 

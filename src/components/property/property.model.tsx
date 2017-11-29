@@ -1,12 +1,7 @@
-import { generateId, round } from '../../utils';
+import { generateId, round } from '../../shared/shared.method';
 import { PropertyState } from './property.types';
 import { Mortgage } from '../mortgage/mortgage.model';
 
-interface ForcastOpts {
-  years: number;
-  percentRentIncrease: number;
-  percentEquityIncrease: number;
-}
 export class Property {
   state: PropertyState;
 
@@ -14,7 +9,6 @@ export class Property {
     const defaults = {
       id: generateId('Property'),
       propertyValue: 1000000,
-      mortgageIds: [],
       monthlyRent: 1000,
       managementFees: 8,
       vacancyLoss: 10,
@@ -22,7 +16,8 @@ export class Property {
       majorRemodelWithholding: 5,
       taxes: 10,
       utilities: 100,
-      insurance: 100
+      insurance: 100,
+      mortgageIds: []
     };
     return new Property(Object.assign(defaults, partialState));
   }
@@ -47,26 +42,25 @@ export class Property {
     return round(this.state.monthlyRent * this.state.majorRemodelWithholding / 100);
   }
 
-  mortgageCost(mortgages: Array<Mortgage>): number {
-    return mortgages.reduce((total, mortgage) => {
-      return round(total += mortgage.monthlyPayment);
-    }, 0);
+  get monthlyRent(): number {
+    return round(this.state.monthlyRent);
   }
 
-  forcastGains(opts: ForcastOpts): Array<Property> {
-    const { years, percentRentIncrease, percentEquityIncrease } = opts;
-    let tempProperty = Property.create(this.state);
-    const properties: Array<Property> = [Property.create(this.state)];
-    for (let i = 0; i < years; i++) {
-      const rentIncrease = tempProperty.state.monthlyRent * percentRentIncrease / 100;
-      const equityIncrease = tempProperty.state.propertyValue * percentEquityIncrease / 100;
-      const updates = {
-        monthlyRent: round(rentIncrease + tempProperty.state.monthlyRent, 0),
-        propertyValue: round(equityIncrease + tempProperty.state.propertyValue, 0)
-      };
-      properties.push(Property.create(tempProperty.copy(updates).state));
-    }
-    return properties;
+  cashFlow(mortgages: Array<Mortgage>): number {
+    return round(
+      this.monthlyRent -
+      this.vacancyCost -
+      this.managementCost -
+      this.minorRepairCost -
+      this.majorRemodelCost -
+      this.mortgageCost(mortgages)
+    );
+  }
+
+  mortgageCost(mortgages: Array<Mortgage>): number {
+    return mortgages.reduce((total, mortgage) => {
+      return round(total + mortgage.monthlyPayment);
+    }, 0);
   }
 
   copy(partialState: Partial<PropertyState> = {}): Property {

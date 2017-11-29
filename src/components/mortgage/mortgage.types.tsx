@@ -1,4 +1,3 @@
-import * as React from 'react';
 export interface MortgageState {
   id: string;
   homeValue: number;
@@ -10,8 +9,8 @@ export interface MortgageState {
   name: string;
   paidAgainstPrincipal: number;
   previousState: MortgageState | null;
-  additionalMonthlyPayment: number;
   isDeleted?: boolean;
+  extraMonthlyPayment: number;
 }
 
 export const COPY_MORTGAGE = 'COPY_MORTGAGE';
@@ -25,4 +24,3 @@ export type CopyMortgageRequest = {
 export type MortgageAction = COPY_MORTGAGE;
 export type MortgageRequest = CopyMortgageRequest;
 export type MortgagesById = { [mortgageId: string]: MortgageState };
-export type EventHandler = (e: React.MouseEvent<{}>, value: number) => void;

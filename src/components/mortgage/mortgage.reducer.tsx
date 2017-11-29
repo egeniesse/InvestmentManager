@@ -1,5 +1,5 @@
 import { MortgagesById, MortgageState, COPY_MORTGAGE, MortgageRequest } from './mortgage.types';
-import { simpleCopy } from '../../utils';
+import { simpleCopy } from '../../shared/shared.method';
 
 export function mortgagesById(state: MortgagesById = {}, action: MortgageRequest): MortgagesById {
   switch (action.type) {
