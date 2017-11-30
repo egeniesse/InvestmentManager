@@ -20,7 +20,7 @@ interface ComponentState {
 export class MortgageComponent extends React.Component<Props, object> {
   state: ComponentState;
   boundHandlers = this.viewableFields.reduce((handlers: {string: EventHandler}, field: ViewableField) => {
-    handlers[field.propName] = this.handleSlide.bind(this, field.propName);
+    handlers[field.propName] = this[field.method].bind(this, field.propName);
     return handlers;
   }, {});
   boundDelete = this.handleDelete.bind(this);
@@ -64,12 +64,12 @@ export class MortgageComponent extends React.Component<Props, object> {
 
   get viewableFields(): Array<ViewableField> {
     return [
-      makeViewableField('homeValue', 'Home Value', 10000, 2000000, 5000),
-      makeViewableField('downPayment', 'Percent Down Payment', 0, 99, 1),
-      makeViewableField('interestRate', 'Interest Rate', 1, 7, .05),
-      makeViewableField('termYears', 'Term Years', 15, 30, 15),
-      makeViewableField('closingCosts', 'Closing Costs', 0, 20000, 100),
-      makeViewableField('extraMonthlyPayment', 'Extra Payment', 0, 5000, 100)
+      makeViewableField('homeValue', 'Home Value', 'handleSlide', 10000, 2000000, 5000),
+      makeViewableField('downPayment', 'Percent Down Payment', 'handleSlide', 0, 99, 1),
+      makeViewableField('interestRate', 'Interest Rate', 'handleSlide', 1, 7, .05),
+      makeViewableField('termYears', 'Term Years', 'handleSlide', 15, 30, 15),
+      makeViewableField('closingCosts', 'Closing Costs', 'handleSlide', 0, 20000, 100),
+      makeViewableField('extraMonthlyPayment', 'Extra Payment', 'handleSlide', 0, 5000, 100)
     ];
   }
 

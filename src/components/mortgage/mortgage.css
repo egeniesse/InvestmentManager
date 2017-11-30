@@ -1,27 +1,29 @@
 .mortgage-component {
   margin: 10px;
-  padding: 10px;
   display: flex;
   justify-content: space-evenly;
-  width: content;
+  align-items: center;
+  width: 100%;
 }
 
+.single-mortgage {
+    width: 30%;
+}
 .single-mortgage .line-item {
   justify-content: center;
   margin: 15px;
   text-align: left;
   display: flex;
   flex-wrap: wrap;
-  width: 15vw;
+  width: 90%;
 }
 
 .single-mortgage .line-item > * {
-  width: 35vw;
+  width: 100%;
 }
 
 .mortgage-data {
-  margin: 5px;
-  width: 38vw;
+  width: 60%;
 }
 .data {
   text-align: left;

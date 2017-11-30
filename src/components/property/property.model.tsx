@@ -8,13 +8,13 @@ export class Property {
   public static create(partialState: Partial<PropertyState>): Property {
     const defaults = {
       id: generateId('Property'),
-      propertyValue: 1000000,
+      propertyValue: 100000,
       monthlyRent: 1000,
       managementFees: 8,
       vacancyLoss: 10,
       minorRepairWithholding: 5,
       majorRemodelWithholding: 5,
-      taxes: 10,
+      propertyTaxRate: 2,
       utilities: 100,
       insurance: 100,
       mortgageIds: []
@@ -46,14 +46,21 @@ export class Property {
     return round(this.state.monthlyRent);
   }
 
-  cashFlow(mortgages: Array<Mortgage>): number {
+  get monthlyTax(): number {
+    return round(this.state.propertyValue * this.state.propertyTaxRate / (12 * 100));
+  }
+
+  cashFlow(mortgageCost: number): number {
     return round(
       this.monthlyRent -
       this.vacancyCost -
       this.managementCost -
       this.minorRepairCost -
       this.majorRemodelCost -
-      this.mortgageCost(mortgages)
+      this.monthlyTax -
+      this.state.utilities -
+      this.state.insurance -
+      mortgageCost
     );
   }
 

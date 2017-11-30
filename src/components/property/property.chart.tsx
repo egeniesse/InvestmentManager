@@ -35,8 +35,8 @@ export class PropertyChart extends React.Component<Props, object> {
           tinycolor('green')
         ),
         getChartDataSet(
-          'Minor Repairs',
-          this.props.data.map((property) => property.minorRepairCost),
+          'Breaking Even',
+          this.props.data.map((property) => 0),
           tinycolor('red')
         )
       ]

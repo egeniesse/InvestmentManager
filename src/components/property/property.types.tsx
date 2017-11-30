@@ -1,3 +1,6 @@
+import { Mortgage } from '../mortgage/mortgage.model';
+import { Property } from './property.model';
+
 export interface PropertyState {
   id: string;
   propertyValue: number;
@@ -7,9 +10,17 @@ export interface PropertyState {
   vacancyLoss: number;
   minorRepairWithholding: number;
   majorRemodelWithholding: number;
-  taxes: number;
+  propertyTaxRate: number;
   utilities: number;
   insurance: number;
+}
+
+export interface PropertySimulatorState {
+  property: Property;
+  mortgages: Array<Mortgage>;
+  years: number;
+  percentRentIncrease: number;
+  percentEquityIncrease: number;
 }
 
 export const COPY_PROPERTY = 'COPY_PROPERTY';

@@ -21,11 +21,12 @@ export function round(num: number, places: number = 2): number {
 export function makeViewableField(
   propName: string,
   description: string,
+  method: string,
   minValue: number,
   maxValue: number,
   step: number
 ): ViewableField {
-  return { propName, description, minValue, maxValue, step };
+  return { propName, description, method, minValue, maxValue, step };
 }
 
 export function getChartDataSet(label: string, data: Array<number>, color: tinycolorInstance): ChartDataSets {
