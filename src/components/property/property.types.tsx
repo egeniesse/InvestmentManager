@@ -10,6 +10,7 @@ export interface PropertyState {
   vacancyLoss: number;
   minorRepairWithholding: number;
   majorRemodelWithholding: number;
+  extraMonthlyPayment: number;
   propertyTaxRate: number;
   utilities: number;
   insurance: number;

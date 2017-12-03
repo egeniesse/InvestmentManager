@@ -14,6 +14,7 @@ export class Property {
       vacancyLoss: 10,
       minorRepairWithholding: 5,
       majorRemodelWithholding: 5,
+      extraMonthlyPayment: 0,
       propertyTaxRate: 2,
       utilities: 100,
       insurance: 100,

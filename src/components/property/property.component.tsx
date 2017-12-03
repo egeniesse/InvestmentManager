@@ -45,8 +45,7 @@ export class PropertyComponent extends React.Component<Props, object> {
 
   createMortgage(): void {
     const { payload } = this.props.updateMortgage({ homeValue: this.data.propertyValue });
-    const mortgageIds = this.mortgages.map(mortgage => mortgage.state.id);
-    this.handleChange({ mortgageIds: mortgageIds.concat([payload.id]) });
+    this.handleChange({ mortgageIds: this.data.mortgageIds.concat([payload.id]) });
     this.handleSimChange({ mortgages: this.state.simModel.state.mortgages.concat([Mortgage.create(payload)]) });
   }
 
@@ -75,13 +74,14 @@ export class PropertyComponent extends React.Component<Props, object> {
     return [
       makeViewableField('propertyValue', 'Property Value', 'handleSlide', 10000, 2000000, 5000),
       makeViewableField('monthlyRent', 'Rent Price', 'handleSlide', 0, 10000, 25),
+      makeViewableField('propertyTaxRate', 'Property Tax Rate', 'handleSlide', 0, 10, .1),
       makeViewableField('vacancyLoss', 'Vacancy Percent', 'handleSlide', 0, 50, 1),
       makeViewableField('managementFees', 'Management Fee Percent', 'handleSlide', 0, 50, 1),
       makeViewableField('minorRepairWithholding', 'Minor Repair Withholding Percent', 'handleSlide', 0, 50, 1),
       makeViewableField('majorRemodelWithholding', 'Major Remodel Withholding Percent', 'handleSlide', 0, 50, 1),
       makeViewableField('utilities', 'Monthly Utilities Cost', 'handleSlide', 0, 3000, 10),
       makeViewableField('insurance', 'Monthly Insurance Cost', 'handleSlide', 0, 3000, 10),
-      makeViewableField('propertyTaxRate', 'Property Tax Rate', 'handleSlide', 0, 10, .1),
+      makeViewableField('extraMonthlyPayment', 'Additional Mortgage Payment', 'handleSlide', 0, 5000, 100),
       makeViewableField('percentRentIncrease', 'Yearly Rent Increase', 'handleSimSlide', 0, 10, .1),
       makeViewableField('years', 'Years to Simulate', 'handleSimSlide', 1, 60, 1)
     ];
@@ -90,13 +90,16 @@ export class PropertyComponent extends React.Component<Props, object> {
   get mortgages(): Array<Mortgage> {
     return this.data.mortgageIds.reduce((mortgages: Array<Mortgage>, mortgageId) => {
       return mortgages.concat(Mortgage.create(this.props.mortgagesById[mortgageId]));
-    }, []);
+    }, []).filter(mortgage => !mortgage.state.isDeleted);
   }
 
   submitState() {
     this.props.updateState(Object.assign({}, this.data));
     this.mortgages.forEach((mortgage) => {
-      this.props.updateMortgage(Object.assign({}, mortgage.state, { homeValue: this.data.propertyValue }));
+      this.props.updateMortgage(Object.assign({}, mortgage.state, {
+        homeValue: this.data.propertyValue,
+        extraMonthlyPayment: this.data.extraMonthlyPayment
+      }));
     });
   }
 
@@ -128,7 +131,7 @@ export class PropertyComponent extends React.Component<Props, object> {
   }
   get mortgageComponent(): JSX.Element {
     const boundCreateMortgage = this.createMortgage.bind(this);
-    const mortgages = this.mortgages.filter(mortgage => !mortgage.state.isDeleted).map((mortgage) => {
+    const mortgages = this.mortgages.map((mortgage) => {
       return <MortgageContainer key={mortgage.state.id} id={mortgage.state.id}/>;
     });
     return (
@@ -179,6 +182,9 @@ export class PropertyComponent extends React.Component<Props, object> {
       'propertyTaxRate',
       'percentRentIncrease'
     ];
+    if (this.mortgages.length) {
+      exposedFields.push('extraMonthlyPayment');
+    }
     return (
       <div className="property-content property-tab">
         {this.exposeFields(exposedFields)}

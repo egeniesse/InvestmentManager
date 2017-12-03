@@ -28,16 +28,19 @@
 }
 
 .property-config {
-  width: 80%;
+  width: 70vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 .property-config .line-item {
   justify-content: center;
-  margin: 15px;
+  margin: 10px 1vw;
   text-align: left;
   display: flex;
   flex-wrap: wrap;
-  width: 90%;
+  width: 33vw;
 }
 
 .property-config .line-item > * {
@@ -48,10 +51,10 @@
   display: flex;
   justify-content: space-between;
   padding: 0;
-    width: 100%;
+  width: 100%;
 }
 
 .property-dashboard-tab {
-    text-align: center;
-    width: 70vw;
+  text-align: center;
+  width: 70vw;
 }

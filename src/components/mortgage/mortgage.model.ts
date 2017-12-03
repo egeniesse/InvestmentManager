@@ -10,7 +10,7 @@ export class Mortgage {
       id: generateId('Mortgage'),
       name: 'Rental 1',
       closingCosts: 5000,
-      downPayment: 10,
+      downPayment: 20,
       homeValue: 100000,
       interestRate: 4.5,
       termYears: 30,
