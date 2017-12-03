@@ -9,9 +9,12 @@ interface Props {
 }
 
 export interface PropertyChartData {
-  monthlyRent: number;
-  cashFlow: number;
-  minorRepairCost: number;
+  investment: number;
+  totalCashFlow: number;
+  totalOperatingCost: number;
+  windowOperatingCost: number;
+  windowCashFlow: number;
+  windowCashOverCash: number;
 }
 
 export class PropertyChart extends React.Component<Props, object> {
@@ -22,22 +25,29 @@ export class PropertyChart extends React.Component<Props, object> {
 
   get data(): ChartData {
     return {
-      labels: this.props.data.map((property, index) => String(index)),
+      labels: this.props.data.map((data, index) => String(index + 1)),
       datasets: [
         getChartDataSet(
-          'Rent Charged',
-          this.props.data.map((property) => property.monthlyRent),
+          'Cash Over Cash',
+          this.props.data.map((data) => {
+            return data.windowCashOverCash;
+          }),
           tinycolor('rgba(75,192,192,1)')
         ),
         getChartDataSet(
           'Cash Flow',
-          this.props.data.map((property) => property.cashFlow),
+          this.props.data.map((data) => data.windowCashFlow),
           tinycolor('green')
         ),
         getChartDataSet(
-          'Breaking Even',
-          this.props.data.map((property) => 0),
-          tinycolor('red')
+          'Operating Cost',
+          this.props.data.map((data) => data.windowOperatingCost),
+          tinycolor('orange')
+        ),
+        getChartDataSet(
+          'Money Made',
+          this.props.data.map((data) => data.totalCashFlow),
+          tinycolor('purple')
         )
       ]
     };

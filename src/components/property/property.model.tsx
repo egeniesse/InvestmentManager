@@ -50,17 +50,18 @@ export class Property {
     return round(this.state.propertyValue * this.state.propertyTaxRate / (12 * 100));
   }
 
-  cashFlow(mortgageCost: number): number {
+  monthlyCost(mortgages: Array<Mortgage>): number {
     return round(
-      this.monthlyRent -
-      this.vacancyCost -
-      this.managementCost -
-      this.minorRepairCost -
-      this.majorRemodelCost -
-      this.monthlyTax -
-      this.state.utilities -
-      this.state.insurance -
-      mortgageCost
+      this.vacancyCost +
+      this.managementCost +
+      this.minorRepairCost +
+      this.majorRemodelCost +
+      this.monthlyTax +
+      this.state.utilities +
+      this.state.insurance +
+      mortgages.reduce((cost, mortgage) => {
+        return cost + mortgage.monthlyPayment;
+      }, 0)
     );
   }
 

@@ -2,22 +2,22 @@ import * as React from 'react';
 import { PropertyState, PropertiesById, PropertySimulatorState } from './property.types';
 import { MortgagesById, MortgageState } from '../mortgage/mortgage.types';
 import { Property } from './property.model';
-import { generateId } from '../../shared/shared.method';
 import MortgageContainer from '../mortgage/mortgage.container';
 import './property.css';
 import { PropertyChart } from './property.chart';
 import { Mortgage } from '../mortgage/mortgage.model';
 import { EventHandler, ViewableField } from '../../shared/shared.types';
 import { makeViewableField } from '../../shared/shared.method';
-import Slider from 'material-ui/Slider';
 import { PropertySimulator } from './property.simulator';
+import { Slider, Tab, Tabs, RaisedButton, AppBar } from 'material-ui';
+import { Doughnut } from 'react-chartjs-2';
 
 interface Props {
   id: string;
   propertiesById: PropertiesById;
   mortgagesById: MortgagesById;
   updateState: (payload: PropertyState) => { type: string; payload: PropertyState; };
-  createMortgage: (mortgageId: string) => { type: string; payload: MortgageState; };
+  updateMortgage: (payload: Partial<MortgageState>) => { type: string; payload: MortgageState; };
 }
 
 interface ComponentState {
@@ -43,13 +43,14 @@ export class PropertyComponent extends React.Component<Props, object> {
     }, {});
   }
 
-  createMortgage() {
-    const { payload } = this.props.createMortgage(generateId('Mortgage'));
-    this.handleChange({ mortgageIds: this.data.mortgageIds.concat([payload.id]) });
+  createMortgage(): void {
+    const { payload } = this.props.updateMortgage({ homeValue: this.data.propertyValue });
+    const mortgageIds = this.mortgages.map(mortgage => mortgage.state.id);
+    this.handleChange({ mortgageIds: mortgageIds.concat([payload.id]) });
     this.handleSimChange({ mortgages: this.state.simModel.state.mortgages.concat([Mortgage.create(payload)]) });
   }
 
-  handleChange(partialState: Partial<PropertyState>) {
+  handleChange(partialState: Partial<PropertyState>): void {
     this.setState(Object.assign({}, this.state, { model : this.state.model.copy(partialState) }));
     this.submitState();
   }
@@ -60,7 +61,7 @@ export class PropertyComponent extends React.Component<Props, object> {
     this.handleChange(partialState);
   }
 
-  handleSimChange(partialState: Partial<PropertySimulatorState>) {
+  handleSimChange(partialState: Partial<PropertySimulatorState>): void {
     this.setState(Object.assign({}, this.state, { simModel: this.state.simModel.copy(partialState) }));
   }
 
@@ -82,7 +83,7 @@ export class PropertyComponent extends React.Component<Props, object> {
       makeViewableField('insurance', 'Monthly Insurance Cost', 'handleSlide', 0, 3000, 10),
       makeViewableField('propertyTaxRate', 'Property Tax Rate', 'handleSlide', 0, 10, .1),
       makeViewableField('percentRentIncrease', 'Yearly Rent Increase', 'handleSimSlide', 0, 10, .1),
-      makeViewableField('years', 'Years to Simulate', 'handleSimSlide', 0, 60, 1)
+      makeViewableField('years', 'Years to Simulate', 'handleSimSlide', 1, 60, 1)
     ];
   }
 
@@ -94,51 +95,109 @@ export class PropertyComponent extends React.Component<Props, object> {
 
   submitState() {
     this.props.updateState(Object.assign({}, this.data));
+    this.mortgages.forEach((mortgage) => {
+      this.props.updateMortgage(Object.assign({}, mortgage.state, { homeValue: this.data.propertyValue }));
+    });
   }
 
   get data(): PropertyState {
     return Object.assign({}, this.state.model.state, this.state.simModel.state);
   }
 
-  render() {
+  exposeFields(whitelist: Array<string>): JSX.Element {
+    const exposedFields = this.viewableFields.filter(field => whitelist.indexOf(field.propName) !== -1);
+    return (
+      <div className="property-config">
+        {exposedFields.map((field) => {
+          return (
+            <div className="line-item" key={this.data.id + field.propName}>
+              <div className="line-data">{field.description}: {this.data[field.propName]}</div>
+              <Slider
+                min={field.minValue}
+                max={field.maxValue}
+                sliderStyle={{margin: '5px'}}
+                defaultValue={this.data[field.propName]}
+                step={field.step}
+                onChange={this.boundHandlers[field.propName]}
+              />
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+  get mortgageComponent(): JSX.Element {
     const boundCreateMortgage = this.createMortgage.bind(this);
+    const mortgages = this.mortgages.filter(mortgage => !mortgage.state.isDeleted).map((mortgage) => {
+      return <MortgageContainer key={mortgage.state.id} id={mortgage.state.id}/>;
+    });
+    return (
+      <div className="property-tab">
+        <div className="mortgage-container">
+          {mortgages.length ? mortgages : <RaisedButton label="Create Mortgage" onClick={boundCreateMortgage}/>}
+        </div>
+      </div>
+    );
+  }
+
+  get propertyDashboard(): JSX.Element {
     const propData = this.state.simModel.copy({
       mortgages: this.mortgages,
       property: this.state.model
-    }).forecastGains();
+    }).forecastedGains;
 
+    const expenseData = this.state.simModel.monthlyExpenses;
+    return (
+      <div className="property-dashboard">
+        <Tabs>
+          <Tab label="Monthly Expenses">
+          <div className="property-dashboard-tab">
+            <Doughnut data={expenseData} />
+          </div>
+          </Tab>
+          <Tab label="Forecast Profitability">
+            <div className="property-dashboard-tab">
+              {this.exposeFields(['years'])}
+              <PropertyChart data={propData} />
+            </div>
+          </Tab>
+        </Tabs>
+      </div>
+    );
+  }
+
+  get propertyConfigComponent(): JSX.Element {
+    const exposedFields = [
+      'propertyValue',
+      'monthlyRent',
+      'vacancyLoss',
+      'managementFees',
+      'minorRepairWithholding',
+      'majorRemodelWithholding',
+      'utilities',
+      'insurance',
+      'propertyTaxRate',
+      'percentRentIncrease'
+    ];
+    return (
+      <div className="property-content property-tab">
+        {this.exposeFields(exposedFields)}
+      </div>
+    );
+  }
+  render() {
     return (
       <div className="property-component">
-        <div className="property-header">
-          <button onClick={boundCreateMortgage}>Add Mortgage</button>
-        </div>
-        <div className="property-content">
-          <div className="property-config">
-            {this.viewableFields.map((field) => {
-              return (
-                <div className="line-item" key={this.data.id + field.propName}>
-                  <div className="line-data">{field.description}: {this.data[field.propName]}</div>
-                  <Slider
-                    min={field.minValue}
-                    max={field.maxValue}
-                    sliderStyle={{margin: '5px'}}
-                    defaultValue={this.data[field.propName]}
-                    step={field.step}
-                    onChange={this.boundHandlers[field.propName]}
-                  />
-                </div>
-              );
-            })}
-          </div>
-          <div className="property-data">
-            <PropertyChart data={propData}/>
-          </div>
-        </div>
-        <div className="mortgage-container">
-          {this.mortgages.filter(mortgage => !mortgage.state.isDeleted).map((mortgage) => {
-            return <MortgageContainer key={mortgage.state.id} id={mortgage.state.id}/>;
-          })}
-        </div>
+        <AppBar title="Dashboard"/>
+        {this.propertyDashboard}
+        <Tabs>
+          <Tab label="Property">
+            {this.propertyConfigComponent}
+          </Tab>
+          <Tab label="Mortgage">
+            {this.mortgageComponent}
+          </Tab>
+        </Tabs>
       </div>
     );
   }

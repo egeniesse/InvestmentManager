@@ -3,9 +3,9 @@ import { MortgageState, MortgagesById } from './mortgage.types';
 import { Mortgage } from './mortgage.model';
 import Slider from 'material-ui/Slider';
 import './mortgage.css';
-import { MortgageChart } from './mortgage.chart';
 import { EventHandler, ViewableField } from '../../shared/shared.types';
 import { makeViewableField } from '../../shared/shared.method';
+import { RaisedButton } from 'material-ui';
 
 interface Props {
   id: string;
@@ -64,7 +64,6 @@ export class MortgageComponent extends React.Component<Props, object> {
 
   get viewableFields(): Array<ViewableField> {
     return [
-      makeViewableField('homeValue', 'Home Value', 'handleSlide', 10000, 2000000, 5000),
       makeViewableField('downPayment', 'Percent Down Payment', 'handleSlide', 0, 99, 1),
       makeViewableField('interestRate', 'Interest Rate', 'handleSlide', 1, 7, .05),
       makeViewableField('termYears', 'Term Years', 'handleSlide', 15, 30, 15),
@@ -74,8 +73,6 @@ export class MortgageComponent extends React.Component<Props, object> {
   }
 
   render() {
-    const forcastedMortgage = this.state.model.forcastRemainingPayments();
-    const mortgageDetails = forcastedMortgage.pastStates;
     return (
       <div className="mortgage-component">
         <div className="single-mortgage">
@@ -94,16 +91,7 @@ export class MortgageComponent extends React.Component<Props, object> {
             </div>
           );
         })}
-          <button className="update-mortgage" onClick={this.boundDelete}>Delete</button>
-        </div>
-        <div className="mortgage-data">
-          <h2>Mortgage Data</h2>
-          <div className="data">Upfront Cost: {this.state.model.downPaymentTotal + this.data.closingCosts}</div>
-          <div className="data">Months left: {mortgageDetails.length - 1}</div>
-          <div className="data">Monthly Payment: {this.state.model.monthlyPayment}</div>
-          <div className="data">Total Paid in Interest: {forcastedMortgage.interestPaid}</div>
-          <div className="data">Total Cost: {forcastedMortgage.totalSpent}</div>
-          <MortgageChart data={mortgageDetails} />
+          <RaisedButton label="Delete" onClick={this.boundDelete}/>
         </div>
       </div>
     );

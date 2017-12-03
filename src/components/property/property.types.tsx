@@ -19,6 +19,7 @@ export interface PropertySimulatorState {
   property: Property;
   mortgages: Array<Mortgage>;
   years: number;
+  granularity: number;
   percentRentIncrease: number;
   percentEquityIncrease: number;
 }

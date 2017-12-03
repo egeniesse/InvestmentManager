@@ -2,7 +2,6 @@
   box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
   flex-wrap: wrap;
   margin: 10px;
-  padding: 10px;
   display: flex;
   justify-content: center;
   max-width: 70vw;
@@ -29,7 +28,7 @@
 }
 
 .property-config {
-  width: 30%;
+  width: 80%;
 }
 
 .property-config .line-item {
@@ -45,7 +44,14 @@
   width: 100%;
 }
 
-.property-data {
-  width: 60%;
+.property-dashboard {
+  display: flex;
+  justify-content: space-between;
   padding: 0;
+    width: 100%;
+}
+
+.property-dashboard-tab {
+    text-align: center;
+    width: 70vw;
 }
