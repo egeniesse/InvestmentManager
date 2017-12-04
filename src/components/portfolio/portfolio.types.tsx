@@ -1,5 +1,6 @@
 export interface PortfolioState {
   propertyIds: Array<string>;
+  activeProperty: Array<string>;
 }
 
 export const COPY_PORTFOLIO = 'COPY_PORTFOLIO';

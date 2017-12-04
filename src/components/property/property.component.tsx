@@ -9,7 +9,7 @@ import { Mortgage } from '../mortgage/mortgage.model';
 import { EventHandler, ViewableField } from '../../shared/shared.types';
 import { makeViewableField } from '../../shared/shared.method';
 import { PropertySimulator } from './property.simulator';
-import { Slider, Tab, Tabs, RaisedButton, AppBar } from 'material-ui';
+import { Slider, Tab, Tabs, RaisedButton } from 'material-ui';
 import { Doughnut } from 'react-chartjs-2';
 
 interface Props {
@@ -194,7 +194,6 @@ export class PropertyComponent extends React.Component<Props, object> {
   render() {
     return (
       <div className="property-component">
-        <AppBar title="Dashboard"/>
         {this.propertyDashboard}
         <Tabs>
           <Tab label="Property">

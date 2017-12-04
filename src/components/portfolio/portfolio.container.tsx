@@ -6,8 +6,8 @@ import { PortfolioState, PortfolioAction } from './portfolio.types';
 import { connect, Dispatch } from 'react-redux';
 import { Property } from '../property/property.model';
 
-export function mapStateToProps({ portfolioState }: StoreState) {
-  return { portfolioState };
+export function mapStateToProps({ portfolioState, propertiesById }: StoreState) {
+  return { portfolioState, propertiesById };
 }
 
 export function mapDispatchToProps(dispatch: Dispatch<PortfolioAction>) {
