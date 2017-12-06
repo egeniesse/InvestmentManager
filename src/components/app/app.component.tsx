@@ -1,12 +1,12 @@
 import * as React from 'react';
-import PortfolioContainer from '../portfolio/portfolio.container';
 import './App.css';
+import { AppRoutes } from './app.routes';
 
 export class AppComponent extends React.Component {
   render() {
     return (
       <div className="App">
-        <PortfolioContainer />
+        <AppRoutes/>
       </div>
     );
   }
