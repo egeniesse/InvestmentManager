@@ -33,19 +33,23 @@ export class PortfolioComponent extends React.Component<Props, object> {
         <AppBar
           iconElementLeft={
             <IconMenu
-              iconButtonElement={<IconButton><NavigationMenu/></IconButton>}
+              iconButtonElement={<IconButton><NavigationMenu color="white"/></IconButton>}
             >
               <MenuItem primaryText="Create Property" onClick={boundCreateProperty} />
               {(() => {
                 return this.data.propertyIds.map((propertyId) => {
-                  const propName = this.props.propertiesById[propertyId].id;
+                  const propName = this.props.propertiesById[propertyId].name;
                   const setAsActiveProperty = boundSetActiveProperty(propertyId);
                   return <MenuItem key={propName} primaryText={propName} onClick={setAsActiveProperty}/>;
                 });
               })()}
             </IconMenu>
           }
-          title="Portfolio"
+          title={
+            this.state.activeProperty.length !== 0 ?
+              this.props.propertiesById[this.state.activeProperty[0]].name :
+              'No properties to show'
+          }
         />
         <div className="properties">
         {this.state.activeProperty.map((propertyId) => {

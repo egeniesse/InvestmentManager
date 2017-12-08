@@ -3,6 +3,7 @@ import { Property } from './property.model';
 
 export interface PropertyState {
   id: string;
+  name: string;
   propertyValue: number;
   mortgageIds: Array<string>;
   monthlyRent: number;

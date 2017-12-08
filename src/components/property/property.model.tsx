@@ -8,6 +8,7 @@ export class Property {
   public static create(partialState: Partial<PropertyState>): Property {
     const defaults = {
       id: generateId('Property'),
+      name: 'New Property',
       propertyValue: 100000,
       monthlyRent: 1000,
       managementFees: 8,

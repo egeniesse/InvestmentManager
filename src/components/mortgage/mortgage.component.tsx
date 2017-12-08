@@ -64,10 +64,10 @@ export class MortgageComponent extends React.Component<Props, object> {
 
   get viewableFields(): Array<ViewableField> {
     return [
-      makeViewableField('downPayment', 'Percent Down Payment', 'handleSlide', 0, 99, 1),
-      makeViewableField('interestRate', 'Interest Rate', 'handleSlide', 1, 7, .05),
-      makeViewableField('termYears', 'Term Years', 'handleSlide', 15, 30, 15),
-      makeViewableField('closingCosts', 'Closing Costs', 'handleSlide', 0, 20000, 100)
+      makeViewableField('downPayment', 'Percent Down Payment', 'handleSlide', 'slider', 0, 99, 1),
+      makeViewableField('interestRate', 'Interest Rate', 'handleSlide', 'slider', 1, 7, .05),
+      makeViewableField('termYears', 'Term Years', 'handleSlide', 'slider', 15, 30, 15),
+      makeViewableField('closingCosts', 'Closing Costs', 'handleSlide', 'slider', 0, 20000, 100)
     ];
   }
 

@@ -9,7 +9,7 @@ import { Mortgage } from '../mortgage/mortgage.model';
 import { EventHandler, ViewableField } from '../../shared/shared.types';
 import { makeViewableField } from '../../shared/shared.method';
 import { PropertySimulator } from './property.simulator';
-import { Slider, Tab, Tabs, RaisedButton } from 'material-ui';
+import { Slider, Tab, Tabs, RaisedButton, TextField } from 'material-ui';
 import { Doughnut } from 'react-chartjs-2';
 
 interface Props {
@@ -70,20 +70,27 @@ export class PropertyComponent extends React.Component<Props, object> {
     this.handleSimChange(partialState);
   }
 
+  handleTextChange(property: string, e: object, newValue: string): void {
+    const partialState = {};
+    partialState[property] = newValue;
+    this.handleChange(partialState);
+  }
+
   get viewableFields(): Array<ViewableField> {
     return [
-      makeViewableField('propertyValue', 'Property Value', 'handleSlide', 10000, 2000000, 5000),
-      makeViewableField('monthlyRent', 'Rent Price', 'handleSlide', 0, 10000, 25),
-      makeViewableField('propertyTaxRate', 'Property Tax Rate', 'handleSlide', 0, 10, .1),
-      makeViewableField('vacancyLoss', 'Vacancy Percent', 'handleSlide', 0, 50, 1),
-      makeViewableField('managementFees', 'Management Fee Percent', 'handleSlide', 0, 50, 1),
-      makeViewableField('minorRepairWithholding', 'Minor Repair Withholding Percent', 'handleSlide', 0, 50, 1),
-      makeViewableField('majorRemodelWithholding', 'Major Remodel Withholding Percent', 'handleSlide', 0, 50, 1),
-      makeViewableField('utilities', 'Monthly Utilities Cost', 'handleSlide', 0, 3000, 10),
-      makeViewableField('insurance', 'Monthly Insurance Cost', 'handleSlide', 0, 3000, 10),
-      makeViewableField('extraMonthlyPayment', 'Additional Mortgage Payment', 'handleSlide', 0, 5000, 100),
-      makeViewableField('percentRentIncrease', 'Yearly Rent Increase', 'handleSimSlide', 0, 10, .1),
-      makeViewableField('years', 'Years to Simulate', 'handleSimSlide', 1, 60, 1)
+      makeViewableField('name', 'Name', 'handleTextChange', 'textField'),
+      makeViewableField('propertyValue', 'Property Value', 'handleSlide', 'slider', 10000, 2500000, 5000),
+      makeViewableField('monthlyRent', 'Rent Price', 'handleSlide', 'slider', 0, 10000, 25),
+      makeViewableField('propertyTaxRate', 'Property Tax Rate', 'handleSlide', 'slider', 0, 10, .1),
+      makeViewableField('vacancyLoss', 'Vacancy Percent', 'handleSlide', 'slider', 0, 50, 1),
+      makeViewableField('managementFees', 'Management Fee Percent', 'handleSlide', 'slider', 0, 50, 1),
+      makeViewableField('minorRepairWithholding', 'Repair Withholding Percent', 'handleSlide', 'slider', 0, 50, 1),
+      makeViewableField('majorRemodelWithholding', 'Remodel Withholding Percent', 'handleSlide', 'slider', 0, 50, 1),
+      makeViewableField('utilities', 'Monthly Utilities Cost', 'handleSlide', 'slider', 0, 3000, 10),
+      makeViewableField('insurance', 'Monthly Insurance Cost', 'handleSlide', 'slider', 0, 3000, 10),
+      makeViewableField('extraMonthlyPayment', 'Additional Mortgage Payment', 'handleSlide', 'slider', 0, 5000, 100),
+      makeViewableField('percentRentIncrease', 'Yearly Rent Increase', 'handleSimSlide', 'slider', 0, 10, .1),
+      makeViewableField('years', 'Years to Simulate', 'handleSimSlide', 'slider', 1, 60, 1)
     ];
   }
 
@@ -108,21 +115,41 @@ export class PropertyComponent extends React.Component<Props, object> {
   }
 
   exposeFields(whitelist: Array<string>): JSX.Element {
+    const boundTextChange = this.handleTextChange.bind(this, 'name');
     const exposedFields = this.viewableFields.filter(field => whitelist.indexOf(field.propName) !== -1);
     return (
       <div className="property-config">
         {exposedFields.map((field) => {
           return (
             <div className="line-item" key={this.data.id + field.propName}>
-              <div className="line-data">{field.description}: {this.data[field.propName]}</div>
-              <Slider
-                min={field.minValue}
-                max={field.maxValue}
-                sliderStyle={{margin: '5px'}}
-                defaultValue={this.data[field.propName]}
-                step={field.step}
-                onChange={this.boundHandlers[field.propName]}
-              />
+              {(() => {
+                if (field.component === 'textField') {
+                  return (
+                    <div className="line-item">
+                      <div className="line-data">{field.description}</div>
+                      <TextField
+                        name={this.data.id}
+                        style={{ width: '100%'}}
+                        onChange={boundTextChange}
+                        value={this.data[field.propName]}
+                      />
+                    </div>
+                  );
+                } else {
+                  return (
+                    <div className="line-item">
+                      <div className="line-data">{field.description}: {this.data[field.propName]}</div>
+                      <Slider
+                        min={field.minValue}
+                        max={field.maxValue}
+                        sliderStyle={{margin: '5px'}}
+                        defaultValue={this.data[field.propName]}
+                        step={field.step}
+                        onChange={this.boundHandlers[field.propName]}
+                      />
+                    </div>);
+                }
+            })()}
             </div>
           );
         })}
@@ -160,7 +187,7 @@ export class PropertyComponent extends React.Component<Props, object> {
           </Tab>
           <Tab label="Forecast Profitability">
             <div className="property-dashboard-tab">
-              {this.exposeFields(['years'])}
+              {this.exposeFields(['years', 'name'])}
               <PropertyChart data={propData} />
             </div>
           </Tab>
@@ -180,7 +207,8 @@ export class PropertyComponent extends React.Component<Props, object> {
       'utilities',
       'insurance',
       'propertyTaxRate',
-      'percentRentIncrease'
+      'percentRentIncrease',
+      'name'
     ];
     if (this.mortgages.length) {
       exposedFields.push('extraMonthlyPayment');
