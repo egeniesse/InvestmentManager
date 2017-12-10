@@ -1,9 +1,8 @@
-.properties {
+.portfolio {
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
-  max-width: 90vw;
-  margin: auto;
+  width: 100%;
 }
 
 .portfolio button {

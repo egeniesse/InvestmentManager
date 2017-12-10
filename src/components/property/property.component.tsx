@@ -9,7 +9,7 @@ import { Mortgage } from '../mortgage/mortgage.model';
 import { EventHandler, ViewableField } from '../../shared/shared.types';
 import { makeViewableField } from '../../shared/shared.method';
 import { PropertySimulator } from './property.simulator';
-import { Slider, Tab, Tabs, RaisedButton, TextField } from 'material-ui';
+import { Slider, RaisedButton, TextField } from 'material-ui';
 import { Doughnut } from 'react-chartjs-2';
 
 interface Props {
@@ -88,8 +88,8 @@ export class PropertyComponent extends React.Component<Props, object> {
       makeViewableField('majorRemodelWithholding', 'Remodel Withholding Percent', 'handleSlide', 'slider', 0, 50, 1),
       makeViewableField('utilities', 'Monthly Utilities Cost', 'handleSlide', 'slider', 0, 3000, 10),
       makeViewableField('insurance', 'Monthly Insurance Cost', 'handleSlide', 'slider', 0, 3000, 10),
-      makeViewableField('extraMonthlyPayment', 'Additional Mortgage Payment', 'handleSlide', 'slider', 0, 5000, 100),
       makeViewableField('percentRentIncrease', 'Yearly Rent Increase', 'handleSimSlide', 'slider', 0, 10, .1),
+      makeViewableField('extraMonthlyPayment', 'Additional Mortgage Payment', 'handleSlide', 'slider', 0, 5000, 100),
       makeViewableField('years', 'Years to Simulate', 'handleSimSlide', 'slider', 1, 60, 1)
     ];
   }
@@ -120,38 +120,34 @@ export class PropertyComponent extends React.Component<Props, object> {
     return (
       <div className="property-config">
         {exposedFields.map((field) => {
-          return (
-            <div className="line-item" key={this.data.id + field.propName}>
-              {(() => {
-                if (field.component === 'textField') {
-                  return (
-                    <div className="line-item">
-                      <div className="line-data">{field.description}</div>
-                      <TextField
-                        name={this.data.id}
-                        style={{ width: '100%'}}
-                        onChange={boundTextChange}
-                        value={this.data[field.propName]}
-                      />
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div className="line-item">
-                      <div className="line-data">{field.description}: {this.data[field.propName]}</div>
-                      <Slider
-                        min={field.minValue}
-                        max={field.maxValue}
-                        sliderStyle={{margin: '5px'}}
-                        defaultValue={this.data[field.propName]}
-                        step={field.step}
-                        onChange={this.boundHandlers[field.propName]}
-                      />
-                    </div>);
-                }
-            })()}
-            </div>
-          );
+          return (() => {
+            if (field.component === 'textField') {
+              return (
+                <div className="line-item" key={this.data.id + field.propName}>
+                  <div className="line-data">{field.description}</div>
+                  <TextField
+                    name={this.data.id}
+                    style={{ width: '100%'}}
+                    onChange={boundTextChange}
+                    value={this.data[field.propName]}
+                  />
+                </div>
+              );
+            } else {
+              return (
+                <div className="line-item" key={this.data.id + field.propName}>
+                  <div className="line-data">{field.description}: {this.data[field.propName]}</div>
+                  <Slider
+                    min={field.minValue}
+                    max={field.maxValue}
+                    sliderStyle={{margin: '5px'}}
+                    defaultValue={this.data[field.propName]}
+                    step={field.step}
+                    onChange={this.boundHandlers[field.propName]}
+                  />
+                </div>);
+            }
+          })();
         })}
       </div>
     );
@@ -162,10 +158,8 @@ export class PropertyComponent extends React.Component<Props, object> {
       return <MortgageContainer key={mortgage.state.id} id={mortgage.state.id}/>;
     });
     return (
-      <div className="property-tab">
-        <div className="mortgage-container">
-          {mortgages.length ? mortgages : <RaisedButton label="Create Mortgage" onClick={boundCreateMortgage}/>}
-        </div>
+      <div>
+        {mortgages.length ? mortgages : <RaisedButton label="Create Mortgage" onClick={boundCreateMortgage}/>}
       </div>
     );
   }
@@ -177,27 +171,25 @@ export class PropertyComponent extends React.Component<Props, object> {
     }).forecastedGains;
 
     const expenseData = this.state.simModel.monthlyExpenses;
+
     return (
       <div className="property-dashboard">
-        <Tabs>
-          <Tab label="Monthly Expenses">
-          <div className="property-dashboard-tab">
-            <Doughnut data={expenseData} />
-          </div>
-          </Tab>
-          <Tab label="Forecast Profitability">
-            <div className="property-dashboard-tab">
-              {this.exposeFields(['years', 'name'])}
-              <PropertyChart data={propData} />
-            </div>
-          </Tab>
-        </Tabs>
+        <div className="stat major-stat">
+          <PropertyChart data={propData} />
+        </div>
+        <div className="stat minor-stat">
+          <Doughnut data={expenseData} />
+        </div>
+        <div className="stat minor-stat">
+          <Doughnut data={expenseData} />
+        </div>
       </div>
     );
   }
 
   get propertyConfigComponent(): JSX.Element {
     const exposedFields = [
+      'years',
       'propertyValue',
       'monthlyRent',
       'vacancyLoss',
@@ -214,23 +206,19 @@ export class PropertyComponent extends React.Component<Props, object> {
       exposedFields.push('extraMonthlyPayment');
     }
     return (
-      <div className="property-content property-tab">
-        {this.exposeFields(exposedFields)}
+      <div className="property-content">
+        <div>
+          {this.exposeFields(exposedFields)}
+          {this.mortgageComponent}
+        </div>
       </div>
     );
   }
   render() {
     return (
       <div className="property-component">
+        {this.propertyConfigComponent}
         {this.propertyDashboard}
-        <Tabs>
-          <Tab label="Property">
-            {this.propertyConfigComponent}
-          </Tab>
-          <Tab label="Mortgage">
-            {this.mortgageComponent}
-          </Tab>
-        </Tabs>
       </div>
     );
   }

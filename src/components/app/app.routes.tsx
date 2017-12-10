@@ -9,7 +9,7 @@ export class AppRoutes extends React.Component {
     return (
       <ConnectedRouter history={history}>
         <div>
-          <Route exact path="/" component={PortfolioContainer}/>
+          <Route exact={true} path="/" component={PortfolioContainer}/>
           <Route path="/portfolio" component={PortfolioContainer}/>
         </div>
       </ConnectedRouter>

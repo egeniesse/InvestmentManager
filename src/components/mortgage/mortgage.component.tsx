@@ -90,7 +90,7 @@ export class MortgageComponent extends React.Component<Props, object> {
             </div>
           );
         })}
-          <RaisedButton label="Delete" onClick={this.boundDelete}/>
+          <RaisedButton label="Delete Mortgage" onClick={this.boundDelete}/>
         </div>
       </div>
     );
